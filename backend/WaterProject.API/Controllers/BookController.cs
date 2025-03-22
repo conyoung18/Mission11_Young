@@ -15,16 +15,26 @@ public class BookController : Controller
     }
 
     [HttpGet]
-    public IEnumerable<Book> GetBooks()
+    public IActionResult GetBooks(int pageSize = 5, int pageNum = 1, string sortOrder = "default")
     {
-        return _context.Books.ToList();
-    }
-    
-    [HttpGet("Alphabetical")]
-    public IEnumerable<Book> GetAscendingBooks()
-    {
-        return _context.Books
-            .ToList()
-            .OrderBy(b => b.Title);
+        var query = _context.Books.AsQueryable();
+
+        if (sortOrder ==  "title")
+        {
+            query = query.OrderBy(b => b.Title);
+        }
+        
+        var something = query
+            .Skip((pageNum - 1) * pageSize)
+            .Take(pageSize)
+            .ToList();
+        
+        var totalNumBooks = _context.Books.Count();
+
+        return Ok(new
+        {
+            Books = something,
+            TotalNumBooks = totalNumBooks
+        });
     }
 }
