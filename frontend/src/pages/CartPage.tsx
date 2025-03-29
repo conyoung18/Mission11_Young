@@ -7,34 +7,71 @@ function CartPage() {
   const { cart, removeFromCart } = useCart();
 
   return (
-    <div>
-      <h2>Your cart</h2>
-      <div>
+    <div className="container mt-5">
+      <div className="card shadow-lg p-4">
+        <h2 className="text-center mb-4">🛒 Your Shopping Cart</h2>
+
         {cart.length === 0 ? (
-          <p>Your cart is empty</p>
+          <p className="text-center text-muted">Your cart is empty 🛍️</p>
         ) : (
-          <ul>
-            {cart.map((item: CartItem) => (
-              <li key={item.bookID}>
-                <span>
-                  {item.title}: ${item.price.toFixed(2)} x {item.quantity}
-                  <strong>Subtotal:</strong> ${(item.price * item.quantity).toFixed(2)}
-                </span>
-                <button onClick={() => {
-                  console.log('Removing item with bookID:', item.bookID); // Debugging log
-                  removeFromCart(item.bookID); // Pass the bookID to removeFromCart
-                }}
-                >
-                  Remove
-                </button>
-              </li>
-            ))}
-          </ul>
+          <table className="table table-bordered table-striped">
+            <thead className="thead-dark">
+              <tr>
+                <th>Title</th>
+                <th>Unit Price</th>
+                <th>Quantity</th>
+                <th>Subtotal</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {cart.map((item: CartItem) => (
+                <tr key={item.bookID}>
+                  <td>{item.title}</td>
+                  <td>${item.price.toFixed(2)}</td>
+                  <td>{item.quantity}</td>
+                  <td>
+                    <strong>${(item.price * item.quantity).toFixed(2)}</strong>
+                  </td>
+                  <td>
+                    <button
+                      className="btn btn-danger btn-sm animate-click"
+                      onClick={() => {
+                        console.log('Removing item with bookID:', item.bookID);
+                        removeFromCart(item.bookID);
+                      }}
+                    >
+                      🗑️ Remove
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         )}
+
+        {/* Total and Buttons */}
+        <div className="text-end mt-4">
+          <h3 className="fw-bold text-success">
+            Total: $
+            {cart
+              .reduce((total, item) => total + item.price * item.quantity, 0)
+              .toFixed(2)}
+          </h3>
+        </div>
+
+        <div className="d-grid gap-2 mt-3">
+          <button className="btn btn-primary btn-lg shadow-sm">
+            💳 Checkout
+          </button>
+          <button
+            className="btn btn-secondary btn-lg shadow-sm"
+            onClick={() => navigate('/books')}
+          >
+            📚 Continue Browsing
+          </button>
+        </div>
       </div>
-      <h3>Total: </h3>
-      <button>Checkout</button>
-      <button onClick={() => navigate('/books')}>Continue Browsing</button>
     </div>
   );
 }
